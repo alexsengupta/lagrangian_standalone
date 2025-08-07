@@ -1,0 +1,7 @@
+Flask
+Flask-Compress
+netCDF4
+numpy
+scipy
+zarr
+xarray
