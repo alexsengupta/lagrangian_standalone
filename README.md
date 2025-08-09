@@ -246,3 +246,16 @@ Once deployed, you can manage the application using `systemd`.
     journalctl -u lagrangian_app -f
     ```
     (The `-f` flag will "follow" the logs in real-time. Press `Ctrl+C` to exit.)
+
+
+
+
+cd /home/ubuntu/lagrangian_standalone/
+git status
+git add .
+git commit -m "Deploy to Nectar, fix static files, and add CSV export"
+git push
+
+username:alexsengupta 
+password: token
+
