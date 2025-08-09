@@ -134,6 +134,49 @@ function emptyGeo() {
     }
   };
 
+  // --- NEW CODE - SAVE BUTTON FUNCTIONALITY (CSV EXPORT) ---
+  saveBtn.onclick = () => {
+      const numParticles = simData.mNP;
+      const numTimesteps = simData.TS;
+      const csvRows = [];
+
+      // 1. Create the CSV Header
+      const headerParts = ['time'];
+      for (let i = 1; i <= numParticles; i++) {
+          headerParts.push(`lonP${i}`, `latP${i}`);
+      }
+      csvRows.push(headerParts.join(','));
+
+      // 2. Create a row for each timestep
+      for (let t = 0; t < numTimesteps; t++) {
+          const row = [simData.dates[t]]; // Start the row with the date
+          for (let p = 0; p < numParticles; p++) {
+              // Add lon and lat for each particle
+              const lon = simData.LONP[t][p];
+              const lat = simData.LATP[t][p];
+              // Use an empty string for NaN values to keep CSV clean
+              row.push(isNaN(lon) ? '' : lon, isNaN(lat) ? '' : lat);
+          }
+          csvRows.push(row.join(','));
+      }
+
+      // 3. Combine all rows into a single string with newlines
+      const csvContent = csvRows.join('\n');
+
+      // 4. Create a Blob and trigger the download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'simulation_data_aus.csv'; // Set the filename to .csv
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+  };
+  // --- END NEW CODE ---
+	  //
+	  //
   function startAnimation() {
     btnA.textContent = 'Stop';
     intervalFn = () => {
