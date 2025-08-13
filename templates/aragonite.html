@@ -76,6 +76,9 @@
   </div>
 </div>
 
+<script>
+  window.STATIC_URL = "{{ url_for('static', filename='') }}";
+</script>
 <script src="{{ url_for('static', filename='aragonite_map.js') }}"></script>
 
 </body>

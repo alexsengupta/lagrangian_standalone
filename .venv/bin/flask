@@ -1,0 +1,7 @@
+#!/Users/z3045790/Dropbox/MY_Website/My_Web_2025/lagrangian_standalone_aus_gbr/.venv/bin/python
+import sys
+from flask.cli import main
+if __name__ == '__main__':
+    if sys.argv[0].endswith('.exe'):
+        sys.argv[0] = sys.argv[0][:-4]
+    sys.exit(main())

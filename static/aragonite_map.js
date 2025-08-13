@@ -81,8 +81,9 @@ async function fetchLandData() {
         let geojsonData;
         try {
             // Prefer a locally hosted simplified land GeoJSON if present
-            geojsonData = await tryUrl('/static/land_simple.geojson');
-        } catch (localErr) {
+            const staticBase = (window.STATIC_URL !== undefined) ? window.STATIC_URL : '/static/';
+            geojsonData = await tryUrl(staticBase + 'land_simple.geojson');
+            } catch (localErr) {
             // Fallback to the upstream GitHub source if local file not available
             geojsonData = await tryUrl('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json');
         }
