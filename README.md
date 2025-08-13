@@ -247,8 +247,69 @@ Once deployed, you can manage the application using `systemd`.
     ```
     (The `-f` flag will "follow" the logs in real-time. Press `Ctrl+C` to exit.)
 
+---
 
+## Performance & Deployment Notes (Aragonite app)
 
+These notes describe the small, high-impact changes applied and recommended runtime settings to reduce latency for the Aragonite visualization.
+
+1) Key runtime dependencies
+- Ensure `Flask-Compress` and `gunicorn` are included in `requirements.txt` (they are already added).
+- `orjson` is optional and useful in later stages for faster JSON serialization if you choose to switch.
+
+2) Server-side compression
+- The app uses Flask-Compress to enable gzip compression of responses. This significantly reduces transfer size for large JSON payloads (e.g., `/aragonite/api/slice`).
+- If you front the app with Nginx, enable gzip (and optionally brotli) in your Nginx config for additional savings:
+  ```
+  gzip on;
+  gzip_types application/json application/javascript text/css text/plain;
+  brotli on;
+  brotli_types application/json application/javascript text/css text/plain;
+  ```
+
+3) Preloading datasets to reduce per-worker cold start
+- Start Gunicorn with the `--preload` option so the master process loads the NetCDF / CO2 datasets once before forking workers. Child workers inherit memory (copy-on-write), avoiding repeated disk reads and per-worker initialization delays:
+  ```
+  gunicorn 'app:app' -w 2 -k gthread --threads 8 --preload --timeout 60 --keep-alive 75
+  ```
+  - Adjust worker and thread counts to match your Nectar VM CPU/RAM.
+
+4) Caching headers
+- Several API endpoints now include Cache-Control headers so CDNs, reverse proxies, and browsers can cache responses:
+  - `/aragonite/api/meta`, `/aragonite/api/co2_data`, `/aragonite/api/reefs` — Cache-Control: public, max-age=86400
+  - `/aragonite/api/slice` — Cache-Control: public, max-age=31536000, immutable
+
+5) Reduced JSON payload size for slices
+- `/aragonite/api/slice` now quantizes numeric values to 3 decimal places before JSON serialization which, when combined with gzip, reduces payload size substantially.
+
+6) Client-side improvements
+- The client parallelizes initial fetches (metadata, land, CO2, reefs), reducing time-to-first-render.
+- The client prefers a local `static/land_simple.geojson` (if present) to avoid the external GitHub request; add this file to the `static/` folder for best results.
+
+7) Recommended static file and CDN settings
+- Serve `static/` via Nginx with long cache headers:
+  ```
+  location /lagrangian_6Aug/static/ {
+      alias /home/ubuntu/lagrangian_standalone/static/;
+      expires 30d;
+      add_header Cache-Control "public, immutable";
+  }
+  ```
+- Consider putting large static data (pre-baked slices, land_simple.geojson) behind a CDN or object store.
+
+8) Verification checklist (quick)
+- Start the app (Gunicorn or Flask).
+- In browser DevTools > Network:
+  - Confirm `/aragonite/api/slice` responses have `Content-Encoding: gzip`.
+  - Confirm `Cache-Control` headers present on `/api/meta`, `/api/co2_data`, `/api/reefs`, `/api/slice`.
+  - Ensure initial network requests are parallel (Promise.all) and first paint completes faster.
+
+9) Further optimizations (if needed)
+- Serve typed-array binary payloads (Float32) for slices to reduce size and parsing cost client-side.
+- Precompute and serve compressed slice files or tiles.
+- Use Zarr chunked reads or an object store if memory is constrained.
+
+---
 
 cd /home/ubuntu/lagrangian_standalone/
 git status
@@ -258,4 +319,3 @@ git push
 
 username:alexsengupta 
 password: token
-

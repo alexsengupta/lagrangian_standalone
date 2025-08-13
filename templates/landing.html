@@ -10,9 +10,11 @@
     <div class="container">
         <h1>Select a Simulation</h1>
         <div class="button-container">
-            <a href="{{ url_for('aus') }}" class="button">Australia</a>
-            <a href="{{ url_for('gbr') }}" class="button">Great Barrier Reef</a>
+            <a href="{{ url_for('aus') }}" class="button" title="Run a broad Australia-wide particle trajectory simulation">Australia</a>
+            <a href="{{ url_for('gbr') }}" class="button" title="Run a high-resolution GBR particle trajectory simulation">Great Barrier Reef</a>
+            <a href="{{ url_for('aragonite_bp.aragonite_ui') }}" class="button" title="View global aragonite saturation projections (1980–2100)">Aragonite Projections</a>
         </div>
+        <p class="rollover-note" title="This app simulates and visualises ocean particle trajectories and aragonite projections in one place.">Hover a button to see a one-line description of that simulation.</p>
     </div>
 </body>
 </html>

@@ -8,6 +8,7 @@ from flask_compress import Compress
 import math
 import zarr
 import json
+from aragonite_bp import aragonite_bp
 
 # Paths
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -20,6 +21,15 @@ app = Flask(
     static_url_path='/lagrangian_6Aug/static'
 )
 Compress(app)
+app.register_blueprint(aragonite_bp)
+# Preload datasets at application startup using an app context.
+# Some Flask versions/environments may not expose app.before_first_request as a callable,
+# so call the preload helper directly inside an app context to ensure current_app is available.
+try:
+    with app.app_context():
+        aragonite_bp._preload_aragonite()
+except Exception as e:
+    app.logger.exception("Failed to preload aragonite data at startup: %s", e)
 
 def parse_params(param_str):
     parts = param_str.split('_')
@@ -334,4 +344,5 @@ def api_gbr_sim(params):
 #if __name__ == '__main__':
 #    app.run(debug=True)
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)    
+    app.run(debug=True, host='0.0.0.0', port=5000)
+    #app.run(debug=True, host='0.0.0.0', port=5001) %change when running locally
