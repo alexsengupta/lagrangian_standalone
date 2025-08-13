@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Aragonite Saturation State</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.plot.ly/plotly-2.33.0.min.js"></script>
+  <style>
+    body { 
+        margin: 0; 
+        padding: 10px; 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+        background-color: #f0f2f5; 
+        display: flex;
+        gap: 10px;
+        height: calc(100vh - 20px);
+    }
+    .column {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .left-column { flex: 1 1 30%; }
+    .right-column { flex: 1 1 70%; }
+    .plot-container { 
+        border-radius: 8px; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        background: white;
+        flex-grow: 1;
+        min-height: 0; /* Important for flexbox children */
+    }
+    .controls-container {
+        padding: 15px;
+        border-radius: 8px; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        background: white;
+    }
+    .control-group { margin-bottom: 15px; display: flex; align-items: center; gap: 15px; }
+    .control-group label { font-weight: bold; font-size: 0.95em; flex-basis: 150px; }
+    .btn { background-color: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9em; }
+    .btn:hover { background-color: #0056b3; }
+    input[type="range"] { flex-grow: 1; }
+    input[type="text"] { width: 120px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<div class="column left-column">
+  <div id="co2-conc-plot" class="plot-container"></div>
+  <div id="co2-emm-plot" class="plot-container"></div>
+</div>
+
+<div class="column right-column">
+  <div id="plot-container" class="plot-container"></div>
+  <div class="controls-container">
+    <div class="control-group">
+        <label>Year: <span id="year-label">1980</span></label>
+        <input id="year-slider" type="range" min="0" max="0" value="0" step="1">
+    </div>
+    <div class="control-group">
+        <label>Scenario: <span id="rcp-label">RCP45</span></label>
+        <button id="toggle-rcp" class="btn">Toggle RCP</button>
+    </div>
+    <div class="control-group">
+        <label>Mode: <span id="mode-label">Absolute</span></label>
+        <button id="toggle-display" class="btn">Toggle Display Mode</button>
+    </div>
+    <div class="control-group">
+        <label>Selected Location</label>
+        Lat: <input id="lat-input" type="text" disabled value="-"> 
+        Lon: <input id="lon-input" type="text" disabled value="-">
+    </div>
+    <div class="control-group">
+        <button id="save-button" class="btn">Save Data for Location</button>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='aragonite_map.js') }}"></script>
+
+</body>
+</html>

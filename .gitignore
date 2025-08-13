@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+*.env
+.env
+
+# macOS
+.DS_Store
+
+# Data & Temp files - You may want to commit small CSVs, but large Zarr stores and temp folders should be ignored.
+static/Omega_MSCI2060.zarr/
+tmp_aragonite/
