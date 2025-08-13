@@ -50,7 +50,7 @@ def load_co2_data():
     if _co2_data is not None:
         return True
     
-    csv_path = os.path.join(current_app.root_path, 'tmp_aragonite', 'static', 'co2_conc_emission.csv')
+    csv_path = os.path.join(current_app.root_path, 'static', 'co2_conc_emission.csv')
     if not os.path.exists(csv_path):
         print(f"CO2 CSV file not found at {csv_path}")
         return False
@@ -77,8 +77,8 @@ def ensure_data_loaded():
     if _data_loaded:
         return True
     
-    nc_path = os.path.join(current_app.root_path, 'tmp_aragonite', 'static', 'Omega_MSCI2060.nc')
-
+    nc_path = os.path.join(current_app.root_path, 'static', 'Omega_MSCI2060.nc')
+    
     if not os.path.exists(nc_path):
         print(f"NetCDF file not found at {nc_path}")
         return False
